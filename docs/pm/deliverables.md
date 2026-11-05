@@ -48,7 +48,7 @@ as the only buffer.
 |---|---|---|---|
 | 1 | Title: what the project is | Sam | Sam |
 | 2 | Team members and their parts | Sam | Sam |
-| 3 | Technology (MongoDB, Express, React/TS, Flutter, Tailwind, JWT, SendGrid, DigitalOcean, GitHub, Discord, Figma, PlantUML) | Sam | Sam |
+| 3 | Technology (MongoDB, Express, React/TS, Flutter, Tailwind, JWT, Resend, DigitalOcean, GitHub, Discord, Figma, PlantUML) | Sam | Sam |
 | 4 | Gantt chart | Sam | Sam |
 | 5 | Use case diagram | Sam | Sam |
 | 6 | ERD | Noah | Noah |
