@@ -9,7 +9,8 @@
     "build": "tsup",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
-    "lint": "oxlint"
+    "lint": "oxlint",
+    "mail:test": "tsx scripts/send-test-email.ts"
   },
   "dependencies": {
     "@cop4331/shared": "workspace:*",
@@ -19,6 +20,7 @@
     "express": "^4.21.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.10.0",
+    "resend": "^6.37.0",
     "zod": "^3.25.0"
   },
   "devDependencies": {
