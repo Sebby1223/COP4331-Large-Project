@@ -9,7 +9,7 @@ Commit both the `.puml` and the `.png`.
 
 | Diagram | File | Owner | Due | Status |
 |---|---|---|---|---|
-| Use case | `use-case.puml` | Sam | Nov 4 | Draft; review with the team |
+| Use case | `use-case.puml` | Sam | Nov 4 | PNG exported; final team review |
 | Sequence: register → verify → login | `sequence-register-verify.puml` | Sam (Sebastian checks it) | Nov 8 | Draft; match it to the real API |
 | ERD | `erd.puml` | Noah | Nov 8 | Not started |
 | Activity: one game round | `activity-game-round.puml` | John | Nov 12 | Not started |

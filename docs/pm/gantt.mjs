@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 const TITLE = "Country Distance Guessing Game: COP4331 Large Project";
 const CHART_START = "2026-10-26"; // Monday of the first week shown
 const CHART_END = "2026-11-22"; // Sunday of the last week shown
-const STATUS_DATE = "2026-10-27"; // the red "status" line; move it forward when you update `done`
+const STATUS_DATE = "2026-11-05"; // the red "status" line; move it forward when you update `done`
 const DEADLINE = "Sun Nov 15, 11:59 pm"; // WebCourses due date
 
 const OWNERS = {
@@ -32,15 +32,15 @@ const PHASES = [
 
 // kind: "task" (default) | "milestone" | "buffer".  done: percent complete, 0-100.
 const TASKS = [
-  { id: "S1", owner: "sam", name: "Push repo, protect main, issue board", start: "2026-10-27", end: "2026-10-28" },
-  { id: "S2", owner: "sam", name: "Droplet, domain, DNS, HTTPS", start: "2026-10-27", end: "2026-10-30" },
-  { id: "S3", owner: "sam", name: "nginx + pm2 deploy, deploy.md", start: "2026-10-31", end: "2026-11-02", deps: ["S2"] },
-  { id: "S4", owner: "sam", name: "CI on PRs (typecheck/build/test)", start: "2026-11-01", end: "2026-11-03", deps: ["S1"] },
-  { id: "S5", owner: "sam", name: "Use case diagram", start: "2026-11-01", end: "2026-11-04" },
-  { id: "S6", owner: "sam", name: "Sequence diagram (register/verify)", start: "2026-11-05", end: "2026-11-08", deps: ["B3"] },
+  { id: "S1", owner: "sam", name: "Push repo, protect main, issue board", start: "2026-10-27", end: "2026-10-28", done: 60 },
+  { id: "S2", owner: "sam", name: "Droplet, domain, DNS, HTTPS", start: "2026-10-27", end: "2026-10-30", done: 40 },
+  { id: "S3", owner: "sam", name: "nginx + pm2 deploy, deploy.md", start: "2026-10-31", end: "2026-11-02", deps: ["S2"], done: 40 },
+  { id: "S4", owner: "sam", name: "CI on PRs (typecheck/build/test)", start: "2026-11-01", end: "2026-11-03", deps: ["S1"], done: 70 },
+  { id: "S5", owner: "sam", name: "Use case diagram", start: "2026-11-01", end: "2026-11-04", done: 90 },
+  { id: "S6", owner: "sam", name: "Sequence diagram (register/verify)", start: "2026-11-05", end: "2026-11-08", deps: ["B3"], done: 40 },
   { id: "S7", owner: "sam", name: "Slide deck", start: "2026-11-06", end: "2026-11-13" },
   { id: "S8", owner: "sam", name: "Rehearsals, USB, campus domain check", start: "2026-11-12", end: "2026-11-15", deps: ["M4"] },
-  { id: "S9", owner: "sam", name: "Standups, Gantt upkeep, commit checks", start: "2026-10-27", end: "2026-11-15" },
+  { id: "S9", owner: "sam", name: "Standups, Gantt upkeep, commit checks", start: "2026-10-27", end: "2026-11-15", done: 40 },
 
   { id: "N1", owner: "noah", name: "Atlas cluster, app user, allowlist", start: "2026-10-27", end: "2026-10-29" },
   { id: "N2", owner: "noah", name: "Country dataset + seed script", start: "2026-10-30", end: "2026-11-02", deps: ["N1"] },
@@ -51,7 +51,7 @@ const TASKS = [
   { id: "N7", owner: "noah", name: "Search integration tests", start: "2026-11-06", end: "2026-11-11", deps: ["N4"] },
 
   { id: "B1", owner: "sebastian", name: "API contract + shared zod schemas", start: "2026-10-27", end: "2026-10-30" },
-  { id: "B2", owner: "sebastian", name: "Email provider + sendMail()", start: "2026-10-31", end: "2026-11-02", deps: ["S2"] },
+  { id: "B2", owner: "sam", name: "Email provider + sendMail()", start: "2026-10-31", end: "2026-11-02", deps: ["S2"], done: 70 },
   { id: "B3", owner: "sebastian", name: "Register, verify, login, JWT", start: "2026-10-31", end: "2026-11-04", deps: ["B1", "N1"] },
   { id: "B4", owner: "sebastian", name: "Forgot / reset password", start: "2026-11-03", end: "2026-11-06", deps: ["B2"] },
   { id: "B5", owner: "sebastian", name: "Game start + guess + scoring", start: "2026-11-05", end: "2026-11-08", deps: ["B3", "N2"] },
