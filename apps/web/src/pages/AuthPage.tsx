@@ -15,7 +15,7 @@ import type {
 import { api, ApiError, clearSession, readPlayer, validSession } from "../api";
 import { GamePage } from "./GamePage";
 const screens: Record<string, [string, string, string]> = {
-  "/login": [
+  "/": [
     "Sign in to play",
     "Welcome back. A world of possibilities awaits.",
     "Sign in",
@@ -49,20 +49,21 @@ const screens: Record<string, [string, string, string]> = {
 export function ProtectedPage() {
   const navigate = useNavigate();
   const player = readPlayer();
-  if (!player) return <Navigate to="/login" replace />;
+  if (!player) return <Navigate to="/" replace />;
   return (
     <GamePage
       player={player}
       onSignOut={() => {
         clearSession();
-        navigate("/login", { replace: true });
+        navigate("/", { replace: true });
       }}
     />
   );
 }
 export function AuthPage() {
   const location = useLocation();
-  return <AuthForm key={location.key} path={location.pathname} />;
+  const path = location.pathname === "/login" ? "/" : location.pathname;
+  return <AuthForm key={location.key} path={path} />;
 }
 function AuthForm({ path }: { path: string }) {
   const [params] = useSearchParams();
@@ -75,7 +76,7 @@ function AuthForm({ path }: { path: string }) {
   const [resend, setResend] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [title, subtitle, action] = screens[path];
-  const login = path === "/login";
+  const login = path === "/";
   const register = path === "/register";
   const reset = path === "/reset-password";
   const verify = path === "/verify-email";
@@ -151,7 +152,7 @@ function AuthForm({ path }: { path: string }) {
   return (
     <main className="auth-layout">
       <header className="auth-header">
-        <Link className="brand" to="/">
+        <Link className="brand" to="/guest">
           CountryGuesser
         </Link>
       </header>
@@ -161,7 +162,7 @@ function AuthForm({ path }: { path: string }) {
           <p className="subtitle">{subtitle}</p>
           {login && (
             <nav className="auth-tabs" aria-label="Account">
-              <Link to="/login" aria-current="page">
+              <Link to="/" aria-current="page">
                 Sign in
               </Link>
               <Link to="/register">Create account</Link>
@@ -296,12 +297,12 @@ function AuthForm({ path }: { path: string }) {
           )}
           {!login && (
             <p className="back-link">
-              <Link to="/login">← Back to sign in</Link>
+              <Link to="/">← Back to sign in</Link>
             </p>
           )}
         </div>
         {(login || register) && (
-          <Link className="guest-card" to="/">
+          <Link className="guest-card" to="/guest">
             Continue as guest
           </Link>
         )}

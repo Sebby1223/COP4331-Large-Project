@@ -66,7 +66,7 @@ export async function api<T>(
   }
   if (authenticated && response.status === 401 && !signal?.aborted) {
     clearSession();
-    window.location.replace("/login?session=expired");
+    window.location.replace("/?session=expired");
     throw new ApiError("Your session expired.", 401);
   }
   const data = await response.json().catch(() => null);

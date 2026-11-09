@@ -151,17 +151,17 @@ export function LeaderboardPage() {
   return (
     <main className="preview-page leaderboard-page">
       <header className="preview-header">
-        <Link className="brand" to="/">
+        <Link className="brand" to={player ? "/game" : "/guest"}>
           CountryGuesser
         </Link>
-        <Link to={player ? "/game" : "/"}>Back to game</Link>
+        <Link to={player ? "/game" : "/guest"}>Back to game</Link>
       </header>
       <section className="leaderboard-card">
         <p className="preview-kicker">THE WORLD'S TOP EXPLORERS</p>
         <h1>Leaderboard</h1>
         {!signedIn ? (
           <p className="ranking-empty">
-            <Link to="/login">Sign in</Link> to view the leaderboard.
+            <Link to="/">Sign in</Link> to view the leaderboard.
           </p>
         ) : error ? (
           <>

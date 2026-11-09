@@ -4,7 +4,8 @@ The web app uses a dark background (#10141f), rounded cards (#202633), blue prim
 
 ## Web routes
 
-- / opens the guest view. /login and /register open the account forms.
+- / opens sign-in with a link to /register. /login also opens sign-in.
+- /guest opens the guest view from Continue as guest.
 - /verify-email and /reset-password read the token from the email link.
 - /game requires a session. /leaderboard prompts guests to sign in.
 

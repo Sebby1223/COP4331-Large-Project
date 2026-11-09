@@ -124,7 +124,7 @@ export function GamePage({
   return (
     <main className="preview-page">
       <header className="preview-header">
-        <Link className="brand" to={player ? "/game" : "/"}>
+        <Link className="brand" to={player ? "/game" : "/guest"}>
           CountryGuesser
         </Link>
         <div className="guest-account">
@@ -138,7 +138,7 @@ export function GamePage({
               Sign out
             </button>
           ) : (
-            <Link to="/login">Sign in</Link>
+            <Link to="/">Sign in</Link>
           )}
           <button
             className="help-trigger"
@@ -160,7 +160,7 @@ export function GamePage({
           </p>
           {!player && (
             <p className="preview-caption">
-              <Link to="/login">Sign in</Link> to start a round and save your
+              <Link to="/">Sign in</Link> to start a round and save your
               score.
             </p>
           )}

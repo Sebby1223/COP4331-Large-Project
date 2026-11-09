@@ -6,7 +6,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { AuthPage, ProtectedPage } from "./pages/AuthPage";
 import { api, ApiError } from "./api";
 vi.mock("./env", () => ({ env: { VITE_API_URL: "http://localhost:5000" } }));
-function show(path = "/login") {
+function show(path = "/") {
   return render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
@@ -170,22 +170,22 @@ it('keeps a valid session usable if stored player data is malformed', () => {
 });
 
 
-it('opens the guest game at home and links to the login page', async () => {
+it('opens sign-in at home and lets a guest visit the game and return', async () => {
   window.history.replaceState(null, '', '/');
   render(<App />);
+  expect(screen.getByRole('heading', {name:'Sign in to play'})).toBeTruthy();
+  await userEvent.click(screen.getByRole('link', {name:'Continue as guest'}));
+  expect(window.location.pathname).toBe('/guest');
   expect(screen.getByRole('region', {name:'Country guessing game'})).toBeTruthy();
   expect(screen.getByText('Guest')).toBeTruthy();
   await userEvent.click(within(screen.getByRole('banner')).getByRole('link', {name:'Sign in'}));
-  expect(window.location.pathname).toBe('/login');
-  expect(screen.getByRole('heading', {name:'Sign in to play'})).toBeTruthy();
-  await userEvent.click(screen.getByRole('link', {name:'CountryGuesser'}));
   expect(window.location.pathname).toBe('/');
-  expect(screen.getByText('Guest')).toBeTruthy();
+  expect(screen.getByRole('heading', {name:'Sign in to play'})).toBeTruthy();
 });
 
-it('redirects the old guest address to home', () => {
-  window.history.replaceState(null, '', '/guest');
+it('preserves the login URL and its expired session message', () => {
+  window.history.replaceState(null, '', '/login?session=expired');
   render(<App />);
-  expect(window.location.pathname).toBe('/');
-  expect(screen.getByText('Guest')).toBeTruthy();
+  expect(screen.getByRole('heading', {name:'Sign in to play'})).toBeTruthy();
+  expect(screen.getByText('Your session expired. Please sign in again.')).toBeTruthy();
 });

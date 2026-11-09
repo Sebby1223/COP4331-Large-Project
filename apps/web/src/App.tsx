@@ -8,6 +8,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         {[
+          "/",
           "/login",
           "/register",
           "/check-inbox",
@@ -18,8 +19,7 @@ export default function App() {
           <Route key={path} path={path} element={<AuthPage />} />
         ))}
         <Route path="/game" element={<ProtectedPage />} />
-        <Route path="/" element={<GamePage />} />
-        <Route path="/guest" element={<Navigate to="/" replace />} />
+        <Route path="/guest" element={<GamePage />} />
         <Route path="/leaderboard" element={<LeaderboardPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
