@@ -20,7 +20,7 @@ a {
 button, input {
   font: inherit;
 }
-a:focus-visible, button:focus-visible, input:focus-visible {
+a:focus-visible, button:focus-visible, input:focus-visible, .pagination span:focus-visible {
   outline: 3px solid #aac1ff;
   outline-offset: 4px;
 }

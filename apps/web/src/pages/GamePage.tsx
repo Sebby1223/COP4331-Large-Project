@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import type { SubmitGuessInput } from "@cop4331/shared";
 import { api } from "../api";
@@ -15,14 +15,30 @@ export function GamePage({
 }) {
   const helpDialog = useRef<HTMLDialogElement>(null);
   const requestPending = useRef(false);
+  const restoreFocus = useRef(false);
+  const searchInput = useRef<HTMLInputElement>(null);
+  const startButton = useRef<HTMLButtonElement>(null);
+  const playAgainButton = useRef<HTMLButtonElement>(null);
   const [round, setRound] = useState<Round | null>(null);
   const [points, setPoints] = useState(player?.totalPoints);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (busy || !restoreFocus.current) return;
+    restoreFocus.current = false;
+    if (document.activeElement !== document.body) return;
+    (
+      searchInput.current ??
+      playAgainButton.current ??
+      startButton.current
+    )?.focus();
+  }, [busy, round, error]);
+
   async function startRound() {
     if (requestPending.current) return;
     requestPending.current = true;
+    restoreFocus.current = true;
     setBusy(true);
     setError("");
     try {
@@ -55,6 +71,7 @@ export function GamePage({
       return;
     }
     requestPending.current = true;
+    restoreFocus.current = true;
     setBusy(true);
     setError("");
     try {
@@ -148,7 +165,12 @@ export function GamePage({
             </p>
           )}
           {player && !round && (
-            <button type="button" onClick={startRound} disabled={busy}>
+            <button
+              ref={startButton}
+              type="button"
+              onClick={startRound}
+              disabled={busy}
+            >
               {busy ? "Starting round…" : "Start round"}
             </button>
           )}
@@ -156,6 +178,7 @@ export function GamePage({
             <CountrySearch
               key={round.gameId + ":" + round.guessesUsed}
               disabled={busy}
+              inputRef={searchInput}
               onSelect={submitGuess}
             />
           )}
@@ -167,7 +190,12 @@ export function GamePage({
         </div>
         <div className="map-space">
           {round && (
-            <RoundResult round={round} onPlayAgain={startRound} busy={busy} />
+            <RoundResult
+              round={round}
+              onPlayAgain={startRound}
+              busy={busy}
+              playAgainRef={playAgainButton}
+            />
           )}
         </div>
         <GuessHistory round={round} />

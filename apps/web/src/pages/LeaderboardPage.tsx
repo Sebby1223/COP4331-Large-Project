@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type Ref } from "react";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import { api, readPlayer } from "../api";
@@ -24,10 +24,12 @@ export function Rankings({
   data,
   currentUserId,
   onPageChange,
+  pageLabelRef,
 }: {
   data: Leaderboard;
   currentUserId?: string;
   onPageChange: (page: number) => void;
+  pageLabelRef?: Ref<HTMLSpanElement>;
 }) {
   const { entries, page, limit, total } = data;
   const totalPages = Math.max(1, Math.ceil(total / limit));
@@ -78,7 +80,7 @@ export function Rankings({
         >
           Previous
         </button>
-        <span aria-live="polite">
+        <span ref={pageLabelRef} tabIndex={-1} aria-live="polite">
           Page {page} of {totalPages}
         </span>
         <button
@@ -99,6 +101,17 @@ export function LeaderboardPage() {
   const [request, setRequest] = useState({ page: 1 });
   const [data, setData] = useState<Leaderboard | null>(null);
   const [error, setError] = useState("");
+  const restoreFocus = useRef(false);
+  const pageLabel = useRef<HTMLSpanElement>(null);
+  const retryButton = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if ((!data && !error) || !restoreFocus.current) return;
+    restoreFocus.current = false;
+    if (document.activeElement === document.body) {
+      (pageLabel.current ?? retryButton.current)?.focus();
+    }
+  }, [data, error]);
 
   useEffect(() => {
     if (!signedIn) return;
@@ -129,6 +142,7 @@ export function LeaderboardPage() {
   }, [request, signedIn]);
 
   function loadPage(page: number) {
+    restoreFocus.current = true;
     setData(null);
     setError("");
     setRequest({ page });
@@ -154,7 +168,11 @@ export function LeaderboardPage() {
             <p className="error" role="alert">
               {error}
             </p>
-            <button type="button" onClick={() => loadPage(request.page)}>
+            <button
+              ref={retryButton}
+              type="button"
+              onClick={() => loadPage(request.page)}
+            >
               Try again
             </button>
           </>
@@ -163,6 +181,7 @@ export function LeaderboardPage() {
             data={data}
             currentUserId={player.id}
             onPageChange={loadPage}
+            pageLabelRef={pageLabel}
           />
         ) : (
           <p className="ranking-empty" role="status">

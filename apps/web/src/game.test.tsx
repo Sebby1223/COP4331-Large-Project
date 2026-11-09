@@ -1,5 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import {
+  cleanup,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { GuessHistory, RoundResult } from "./components/RoundUI";
@@ -83,9 +89,15 @@ describe("Round screens", () => {
     const user = userEvent.setup();
     await user.click(screen.getByRole("button", { name: "Start round" }));
     const input = await screen.findByRole("combobox");
+    await waitFor(() => expect(document.activeElement).toBe(input));
     await user.type(input, "port");
     await user.click(await screen.findByRole("option", { name: "Portugal" }));
     expect(await screen.findByText("You found it!")).toBeTruthy();
+    await waitFor(() =>
+      expect(document.activeElement).toBe(
+        screen.getByRole("button", { name: "Play again" }),
+      ),
+    );
     expect(fetcher.mock.calls[2]).toEqual([
       "http://localhost:5000/api/games/game-1/guesses",
       expect.objectContaining({
@@ -99,6 +111,9 @@ describe("Round screens", () => {
     expect(screen.getByText("John · 100 pts")).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "Play again" }));
     expect(await screen.findByText("10 guesses left")).toBeTruthy();
+    await waitFor(() =>
+      expect(document.activeElement).toBe(screen.getByRole("combobox")),
+    );
     expect(screen.queryByText("You found it!")).toBeNull();
   });
 });
@@ -154,7 +169,8 @@ describe("Rankings", () => {
       </MemoryRouter>,
     );
     await userEvent.click(await screen.findByRole("button", { name: "Next" }));
-    expect(await screen.findByText("Page 2 of 2")).toBeTruthy();
+    const pageLabel = await screen.findByText("Page 2 of 2");
+    await waitFor(() => expect(document.activeElement).toBe(pageLabel));
     const row = screen.getByText("You").closest("tr");
     expect(row?.className).toBe("current-player");
     expect(within(row!).getByText("21")).toBeTruthy();

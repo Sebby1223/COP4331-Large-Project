@@ -1,3 +1,4 @@
+import type { Ref } from "react";
 import type { Round } from "../round";
 import { guessRank, guessesLeft } from "../round";
 export function GuessHistory({ round }: { round: Round | null }) {
@@ -33,10 +34,12 @@ export function RoundResult({
   round,
   onPlayAgain,
   busy = false,
+  playAgainRef,
 }: {
   round: Round;
   onPlayAgain: () => void;
   busy?: boolean;
+  playAgainRef?: Ref<HTMLButtonElement>;
 }) {
   if (round.status === "active") return null;
   const won = round.status === "won";
@@ -63,7 +66,12 @@ export function RoundResult({
           <strong>{round.pointsEarned ?? 0}</strong> points earned
         </p>
       </div>
-      <button type="button" onClick={onPlayAgain} disabled={busy}>
+      <button
+        ref={playAgainRef}
+        type="button"
+        onClick={onPlayAgain}
+        disabled={busy}
+      >
         {busy ? "Starting round…" : "Play again"}
       </button>
     </section>

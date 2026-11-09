@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
-import type { KeyboardEvent } from "react";
+import type { KeyboardEvent, Ref } from "react";
 import { z } from "zod";
 import { api } from "../api";
 const countriesSchema = z.array(
@@ -15,10 +15,12 @@ export function CountrySearch({
   canSearch = true,
   onSelect,
   disabled = false,
+  inputRef,
 }: {
   canSearch?: boolean;
   onSelect?: (country: CountryOption) => void;
   disabled?: boolean;
+  inputRef?: Ref<HTMLInputElement>;
 }) {
   const listId = useId();
   const [query, setQuery] = useState("");
@@ -124,12 +126,17 @@ export function CountrySearch({
       <label htmlFor={`${listId}-input`}>Your next guess</label>
       <div className="preview-search">
         <input
+          ref={inputRef}
           id={`${listId}-input`}
           role="combobox"
           autoComplete="off"
           aria-autocomplete="list"
-          aria-expanded={open && results.length > 0}
-          aria-controls={`${listId}-list`}
+          aria-expanded={!disabled && open && results.length > 0}
+          aria-controls={
+            !disabled && open && results.length > 0
+              ? `${listId}-list`
+              : undefined
+          }
           aria-activedescendant={
             open && active >= 0 ? `${listId}-${active}` : undefined
           }
