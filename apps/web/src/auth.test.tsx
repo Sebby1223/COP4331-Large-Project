@@ -183,8 +183,8 @@ it('opens sign-in at home and lets a guest visit the game and return', async () 
   expect(screen.getByRole('heading', {name:'Sign in to play'})).toBeTruthy();
 });
 
-it('preserves the login URL and its expired session message', () => {
-  window.history.replaceState(null, '', '/login?session=expired');
+it.each(['/login', '/LOGIN/'])('preserves the expired session message at %s', (path) => {
+  window.history.replaceState(null, '', path + '?session=expired');
   render(<App />);
   expect(screen.getByRole('heading', {name:'Sign in to play'})).toBeTruthy();
   expect(screen.getByText('Your session expired. Please sign in again.')).toBeTruthy();

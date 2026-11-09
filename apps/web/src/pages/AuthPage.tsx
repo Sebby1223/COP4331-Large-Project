@@ -62,7 +62,8 @@ export function ProtectedPage() {
 }
 export function AuthPage() {
   const location = useLocation();
-  const path = location.pathname === "/login" ? "/" : location.pathname;
+  const pathname = location.pathname.toLowerCase().replace(/\/+$/, "") || "/";
+  const path = pathname === "/login" ? "/" : pathname;
   return <AuthForm key={location.key} path={path} />;
 }
 function AuthForm({ path }: { path: string }) {
