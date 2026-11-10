@@ -16,18 +16,16 @@ export async function CountrySearch(countryName) {
     console.log("Connected to MongoDB Atlas!");
    const input = escapeRegex(countryName);
     const pipeline = [
-	 {
+  {
     $search: {
       index: "name",
-      regex: {
-        query: `.*${input}.*`,
+      autocomplete: {
+        query: input,
         path: "COUNTRY",
-        allowAnalyzedField: true,
       },
     },
   },
- 
-  ]
+]
    
   const fullResults = await countries.aggregate(pipeline);
   const results = fullResults.slice(0,10);
