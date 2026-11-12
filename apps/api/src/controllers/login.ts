@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { loginRequestSchema } from '@cop4331/shared';
+import { loginSchema } from '@cop4331/shared';
 import { getDb } from '../db.js';
 
 export async function loginController(req: Request, res: Response): Promise<void> {
-  const parsed = loginRequestSchema.safeParse(req.body);
+  const parsed = loginSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: 'Invalid email or password' });
     return;

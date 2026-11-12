@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import { registerRequestSchema } from '@cop4331/shared';
+import { registerSchema } from '@cop4331/shared';
 import { getDb } from '../db.js';
 import { createRawToken, hashToken } from '../tokens.js';
 import { sendVerificationEmail } from '../mail.js';
 
 export async function registerController(req: Request, res: Response): Promise<void> {
-  const parsed = registerRequestSchema.safeParse(req.body);
+  const parsed = registerSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.issues[0]?.message || 'Invalid registration input' });
     return;
