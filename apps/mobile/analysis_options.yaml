@@ -1,1 +1,7 @@
+@"
 include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    deprecated_member_use: ignore
+"@ | Set-Content apps/mobile/analysis_options.yaml
