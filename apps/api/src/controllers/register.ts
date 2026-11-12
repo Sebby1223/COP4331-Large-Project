@@ -1,16 +1,15 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import { registerSchema } from '@repo/shared';
-import { getDb } from './db';
-import { createRawToken, hashToken } from './tokens';
-import { sendVerificationEmail } from './mail';
+import { registerRequestSchema } from '@cop4331/shared';
+import { getDb } from '../db.js';
+import { createRawToken, hashToken } from '../tokens.js';
+import { sendVerificationEmail } from '../mail.js';
 
-const WEB_URL = process.env.WEB_URL || 'http://localhost:5173';
-
-export async function registerController(req: Request, res: Response): Promise<any> {
-  const parsed = registerSchema.safeParse(req.body);
+export async function registerController(req: Request, res: Response): Promise<void> {
+  const parsed = registerRequestSchema.safeParse(req.body);
   if (!parsed.success) {
-    return res.status(400).json({ error: 'Invalid registration input' });
+    res.status(400).json({ error: parsed.error.issues[0]?.message || 'Invalid registration input' });
+    return;
   }
 
   try {
@@ -19,7 +18,8 @@ export async function registerController(req: Request, res: Response): Promise<a
 
     const existing = await db.collection('users').findOne({ email });
     if (existing) {
-      return res.status(409).json({ error: 'Email already registered' });
+      res.status(409).json({ error: 'Email already registered' });
+      return;
     }
 
     const passwordHash = await bcrypt.hash(parsed.data.password, 10);
@@ -45,8 +45,9 @@ export async function registerController(req: Request, res: Response): Promise<a
 
     await sendVerificationEmail(email, rawToken);
 
-    return res.status(201).json({ message: 'Account created. Check your email to verify.' });
-  } catch (err: any) {
-    return res.status(500).json({ error: err.message || 'Internal server error' });
+    res.status(201).json({ message: 'Account created. Check your email to verify.' });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Internal server error';
+    res.status(500).json({ error: message });
   }
 }
