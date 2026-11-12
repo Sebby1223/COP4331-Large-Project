@@ -116,10 +116,53 @@ export const tokenPayloadSchema = z.object({
   lastName: z.string(),
 });
 export type TokenPayload = z.infer<typeof tokenPayloadSchema>;
+<<<<<<< Updated upstream
 export const loginRequestSchema = z.object({ login: z.string().min(1), password: z.string().min(1) });
 export type LoginRequest = z.infer<typeof loginRequestSchema>;
 export interface LoginResponse { accessToken?: string; error?: string; }
 export const addCardRequestSchema = z.object({ userId: z.number(), card: z.string().min(1), jwtToken: z.string() });
+=======
+
+// success: { accessToken }, failure: { error }
+export interface LoginResponse {
+  accessToken?: string;
+  error?: string;
+}
+
+// ---- POST /api/auth/register ----
+export const registerRequestSchema = z.object({
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+export type RegisterRequest = z.infer<typeof registerRequestSchema>;
+
+// ---- POST /api/auth/login ----
+export const loginRequestSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1),
+});
+export type LoginRequest = z.infer<typeof loginRequestSchema>;
+
+export interface LoginResponse {
+  accessToken?: string;
+  user?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    totalPoints: number;
+  };
+  error?: string;
+}
+// ---- POST /api/addcard ----
+export const addCardRequestSchema = z.object({
+  userId: z.number(),
+  card: z.string().min(1),
+  jwtToken: z.string(),
+});
+>>>>>>> Stashed changes
 export type AddCardRequest = z.infer<typeof addCardRequestSchema>;
 export interface AddCardResponse { error: string; jwtToken: { accessToken: string } | null; }
 export const searchCardsRequestSchema = z.object({ userId: z.number(), search: z.string(), jwtToken: z.string() });

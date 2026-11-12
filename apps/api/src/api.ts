@@ -9,8 +9,8 @@ import {
   loginRequestSchema,
   searchCardsRequestSchema,
 } from '@cop4331/shared';
-import { db } from './db.js';
 import { createToken, isExpired, refresh } from './createJWT.js';
+import { getDb } from './db.js';
 
 const INVALID_JWT = 'The JWT is no longer valid';
 const BAD_REQUEST = 'Invalid request body';
@@ -19,29 +19,34 @@ const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 export function setApp(app: Express): void {
   app.post('/api/login', async (req, res) => {
-    // incoming: login, password
+    // incoming: email, password
     // outgoing: accessToken | error
     const parsed = loginRequestSchema.safeParse(req.body);
     if (!parsed.success) {
       res.status(200).json({ error: BAD_REQUEST } satisfies LoginResponse);
       return;
     }
-    const { login, password } = parsed.data;
+    const { email, password } = parsed.data;
 
     try {
-      // NOTE: starter only -- passwords are stored/compared in plaintext as in the course demo.
-      // Replace with bcrypt-hashed passwords when real registration is added.
-      const user = await db().collection('Users').findOne({ Login: login, Password: password });
+      const db = getDb();
+      const user = await db.collection('users').findOne({ email: email.toLowerCase() });
 
       if (!user) {
         res.status(200).json({ error: 'Login/Password incorrect' } satisfies LoginResponse);
         return;
       }
 
+      // If you are using plain text comparison for legacy starter routes:
+      if (user.passwordHash !== password) {
+        res.status(200).json({ error: 'Login/Password incorrect' } satisfies LoginResponse);
+        return;
+      }
+
       const ret = createToken({
-        userId: user.UserId,
-        firstName: user.FirstName,
-        lastName: user.LastName,
+        userId: user._id.toString() as unknown as number,
+        firstName: user.firstName as string,
+        lastName: user.lastName as string,
       });
       res.status(200).json(ret satisfies LoginResponse);
     } catch (e) {
@@ -66,7 +71,8 @@ export function setApp(app: Express): void {
 
     let error = '';
     try {
-      await db().collection('Cards').insertOne({ Card: card, UserId: userId });
+      const db = getDb();
+      await db.collection('Cards').insertOne({ Card: card, UserId: userId });
     } catch (e) {
       error = (e as Error).message;
     }
@@ -97,11 +103,12 @@ export function setApp(app: Express): void {
     let results: string[] = [];
     try {
       // partial, case-insensitive match; user input is escaped so it can't inject a regex
-      const docs = await db()
+      const db = getDb();
+      const docs = await db
         .collection('Cards')
         .find({ Card: { $regex: escapeRegex(search.trim()), $options: 'i' } })
         .toArray();
-      results = docs.map((d) => d.Card as string);
+      results = docs.map((d: Record<string, unknown>) => d.Card as string);
     } catch (e) {
       error = (e as Error).message;
     }
